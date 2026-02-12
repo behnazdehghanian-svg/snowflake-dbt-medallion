@@ -1,0 +1,31 @@
+
+# version: 2
+
+# sources:
+#   - name: raw
+#     tables:
+#       - name: customers
+#         meta:
+#           external_location: "data/raw_customers.csv"
+#           # gcs_path: 'gs://my_bucket/raw_customers.csv'  # uncomment for GCS version
+#           external_format: csv
+
+#       - name: orders
+#         meta:
+#           external_location: "data/raw_orders.csv"
+#           # gcs_path: 'gs://my_bucket/raw_orders.csv'   # uncomment for GCS version
+#           external_format: csv
+
+version: 2
+
+sources:
+  - name: raw
+    schema: main
+    tables:
+      - name: customers
+        meta:
+          external_location: "data/raw_customers.csv"
+
+      - name: orders
+        meta:
+          external_location: "data/raw_orders.csv"

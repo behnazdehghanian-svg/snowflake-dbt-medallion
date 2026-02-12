@@ -1,0 +1,29 @@
+name: 'snowflake_dbt_medallion'  # must be a valid Python identifier (underscores, no dashes)
+version: '1.0'
+config-version: 2
+
+profile: 'snowflake-dbt-medallion'
+
+# Local vs GCS: models live in these folders
+model-paths: ["models"]
+macro-paths: ["macros"]
+target-path: "target"
+analysis-paths: ["analysis"]
+
+models:
+  snowflake_dbt_medallion:
+    bronze:
+      +schema: BRONZE
+      +materialized: incremental
+      # Local CSV: uses {{ ref('raw_orders') }} / {{ ref('raw_customers') }}
+      # GCS version: replace with external tables or stages (commented in SQL)
+    silver:
+      +schema: SILVER
+      +materialized: table
+    marts:
+      +schema: GOLD
+      +materialized: table
+      dimensions:
+        +materialized: table
+      facts:
+        +materialized: table
