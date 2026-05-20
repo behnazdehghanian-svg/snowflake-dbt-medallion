@@ -12,11 +12,6 @@ with source_data as (
 )
 
 
--- Version 2: From GCS (commented out)
--- with source_data as (
---     select *
---     from external_stage_orders  
--- )
 
 , deduplicated as (
     select *
@@ -27,16 +22,18 @@ with source_data as (
                    order by updated_at desc
                ) as rn
         from source_data
+        where order_id is not null
     )
     where rn = 1
 )
 
 select
-    *,
-    --current_timestamp() as _loaded_at
-    current_localtimestamp() as _loaded_at
+    * exclude (_loaded_at),
+    current_timestamp() as _loaded_at
 from deduplicated
 
 {% if is_incremental() %}
 where updated_at > (select max(updated_at) from {{ this }})
 {% endif %}
+
+

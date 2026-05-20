@@ -2,6 +2,20 @@ version: 2
 
 models:
 
+  - name: bronze_orders
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+
+  - name: bronze_customers
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+
   - name: silver_orders
     columns:
       - name: order_id
@@ -11,6 +25,14 @@ models:
       - name: customer_id
         tests:
           - not_null
+      - name: amount
+        tests:
+          - not_null
+      - name: _status
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['completed', 'shipped', 'cancelled']
 
   - name: silver_customers
     columns:
@@ -18,17 +40,29 @@ models:
         tests:
           - not_null
           - unique
+      - name: email
+        tests:
+          - not_null
 
-  - name: dim_customers
+  - name: dim_customers_gold
     columns:
+      - name: customer_key
+        tests:
+          - not_null
+          - unique
       - name: customer_id
         tests:
           - not_null
-          - unique
 
-  - name: fact_sales
+  - name: fact_sales_gold
     columns:
-      - name: order_id
+      - name: order_key
         tests:
           - not_null
           - unique
+      - name: customer_key
+        tests:
+          - not_null
+      - name: amount
+        tests:
+          - not_null

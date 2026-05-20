@@ -1,29 +1,33 @@
 {{ config(materialized='table') }}
 
--- Version 1: from Silver
 with fact as (
     select
+        -- surrogate key
+        {{ dbt_utils.generate_surrogate_key(['o.order_id']) }} as order_key,
+
+        -- foreign key to dim_customers
+        {{ dbt_utils.generate_surrogate_key(['o.customer_id']) }} as customer_key,
+
+        -- order info
         o.order_id,
-        o.customer_id,
         o.order_date,
         o.amount,
-        c.first_name || ' ' || c.last_name as customer_name
+        o._status,
+
+        -- customer info
+        c.first_name || ' ' || c.last_name as customer_name,
+        c.email,
+
+        -- business logic
+        case
+            when o.amount > 200 then 'High Value'
+            when o.amount > 100 then 'Medium Value'
+            else 'Low Value'
+        end as order_category
+
     from {{ ref('silver_orders') }} o
     left join {{ ref('silver_customers') }} c
         on o.customer_id = c.customer_id
 )
-
--- Version 2: from GCS / staging (commented)
--- with fact as (
---     select
---         o.order_id,
---         o.customer_id,
---         o.order_date,
---         o.amount,
---         c.first_name || ' ' || c.last_name as customer_name
---     from external_stage_orders o
---     left join external_stage_customers c
---         on o.customer_id = c.customer_id
--- )
 
 select * from fact

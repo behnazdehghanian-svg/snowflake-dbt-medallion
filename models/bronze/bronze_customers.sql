@@ -32,8 +32,8 @@ with source_data as (
 
 select
     *,
-    --current_timestamp() as _loaded_at
-    current_localtimestamp() as _loaded_at
+    current_timestamp() as _loaded_at
+    --current_localtimestamp() as _loaded_at
 from deduplicated
 
 {% if is_incremental() %}

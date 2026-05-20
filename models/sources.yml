@@ -20,7 +20,7 @@ version: 2
 
 sources:
   - name: raw
-    schema: main
+    schema: RAW
     tables:
       - name: customers
         meta:
